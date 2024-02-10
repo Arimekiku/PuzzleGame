@@ -1,0 +1,8 @@
+# Generated packages
+.idea
+.vscode
+.cache
+
+# Builds
+build
+cmake-build-*
