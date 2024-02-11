@@ -25,6 +25,10 @@ void Game::updateEvents() {
 
 void Game::update() {
     updateEvents();
+
+    for (auto obj : objects) {
+        obj->update();
+    }
 }
 
 void Game::render() {
