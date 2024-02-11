@@ -4,15 +4,21 @@
 
 int main() {
     Game game;
-
     textureAtlas textureAtlas;
 
-    sf::Sprite sprites(textureAtlas.brickTexture);
-    sprites.setOrigin(sf::Vector2f(16, 16));
-    sprites.setPosition(sf::Vector2f(16, 16));
+    auto* test1 = new GameObject(textureAtlas.brickTexture);
+    test1->position = sf::Vector2i(320, 320);
+
+    auto* test2 = new GameObject(textureAtlas.brickTexture);
+
+    game.addGameObject(test1);
+    game.addGameObject(test2);
 
     while (game.running()) {
         game.update();
+
+        test1->update();
+        test2->update();
 
         game.render();
     }

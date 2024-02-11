@@ -30,6 +30,10 @@ void Game::update() {
 void Game::render() {
     window->clear();
 
+    for (auto obj : objects) {
+        window->draw(obj->getSprite());
+    }
+
     window->display();
 }
 
@@ -42,6 +46,14 @@ void Game::start() {
     window = new sf::RenderWindow(vMode, "Title", sf::Style::Default);
 }
 
+void Game::addGameObject(GameObject* newObject) {
+    objects.push_back(newObject);
+}
+
 Game::~Game() {
+    for (auto obj : objects) {
+        delete obj;
+    }
+
     delete window;
 }
