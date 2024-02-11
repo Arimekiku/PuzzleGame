@@ -1,22 +1,21 @@
-#include "essentials/windowEssential/windowEssential.hpp"
-#include "SFML/Graphics/Texture.hpp"
+#include "game/game.h"
+#include "game/textureHandler/textureHandler.h"
+#include "SFML/Graphics.hpp"
 
 int main() {
-    //TODO: remove
-    sf::Texture spriteTexture;
-    if (!spriteTexture.loadFromFile(R"(D:\Dev\C++\GameEngine\sprites\brick.png)")) {
-        throw std::exception();
+    Game game;
+
+    textureAtlas textureAtlas;
+
+    sf::Sprite sprites(textureAtlas.brickTexture);
+    sprites.setOrigin(sf::Vector2f(16, 16));
+    sprites.setPosition(sf::Vector2f(16, 16));
+
+    while (game.running()) {
+        game.update();
+
+        game.render();
     }
-
-    sf::Sprite test1(spriteTexture);
-    sf::Sprite test2(spriteTexture);
-    test2.setPosition(sf::Vector2f(400, 300));
-
-    gameWindow gameWindow(800, 600, "Title");
-
-    gameWindow.addEntity(test2);
-    gameWindow.addEntity(test1);
-    gameWindow.update();
 
     return 0;
 }
