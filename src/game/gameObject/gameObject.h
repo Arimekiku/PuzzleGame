@@ -4,16 +4,16 @@
 
 class GameObject {
 public:
-    GameObject(const sf::Texture& gameTexture, sf::Vector2f position = sf::Vector2f(0, 0));
+    explicit GameObject(const sf::Texture* gameTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 
     void update();
 
     sf::Sprite getSprite();
 
-    ~GameObject();
+    void setTexture(const sf::Texture& texture);
 
     sf::Vector2i position;
 
 private:
-    sf::Sprite* sprite;
+    sf::Sprite sprite;
 };

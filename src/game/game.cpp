@@ -1,3 +1,4 @@
+#include <iostream>
 #include "game.h"
 
 Game::Game() {
@@ -48,6 +49,35 @@ bool Game::running() const {
 void Game::start() {
     auto vMode = sf::VideoMode(sf::Vector2u(640, 480));
     window = new sf::RenderWindow(vMode, "Title", sf::Style::Default);
+
+    textureAtlas = new TextureAtlas();
+    gameObjectFactory = new Factory(textureAtlas);
+
+    nlohmann::json map;
+    std::fstream fInput;
+    fInput.open(R"(D:\Dev\C++\GameEngine\resources\map\map.json)");
+    fInput >> map;
+    fInput.close();
+
+    int i = 0, j = 0;
+
+    auto mapObjects = loadMapFromJSOM(map);
+    for (const auto& row : mapObjects) {
+        for (const int& value : row) {
+            auto tempObject = gameObjectFactory->buildGameObject(value);
+
+            if (tempObject != nullptr) {
+                tempObject->position = sf::Vector2i(16 + 32 * i, 16 + 32 * j);
+
+                addGameObject(tempObject);
+            }
+
+            i++;
+        }
+
+        i = 0;
+        j++;
+    }
 }
 
 void Game::addGameObject(GameObject* newObject) {
@@ -60,4 +90,25 @@ Game::~Game() {
     }
 
     delete window;
+}
+
+static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json) {
+    std::vector<std::vector<int>> map;
+    nlohmann::json mapJSON = json["map"];
+
+    std::cout << "COPY MAP FROM JSON FILE: " << std::endl;
+
+    for (const auto& obj : mapJSON) {
+        std::vector<int> row = obj;
+
+        for (int value : row) {
+            std::cout << value << " ";
+        }
+
+        map.push_back(row);
+
+        std::cout << std::endl;
+    }
+
+    return map;
 }
