@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fstream>
 #include "SFML/Graphics.hpp"
 #include "gameObject/gameObject.h"
 #include "gameObject/gameObjectFactory.h"

@@ -5,7 +5,7 @@
 
 class Factory {
 public:
-    Factory(TextureAtlas* newAtlas);
+    explicit Factory(TextureAtlas* newAtlas);
 
     [[nodiscard]] GameObject* buildGameObject(int value) const;
 

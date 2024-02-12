@@ -1,8 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include "game.h"
 
 Game::Game() {
     window = nullptr;
+    textureAtlas = nullptr;
+    gameObjectFactory = nullptr;
 
     start();
 }
@@ -47,12 +50,14 @@ bool Game::running() const {
 }
 
 void Game::start() {
+    // SETUP STUFF
     auto vMode = sf::VideoMode(sf::Vector2u(640, 480));
     window = new sf::RenderWindow(vMode, "Title", sf::Style::Default);
 
     textureAtlas = new TextureAtlas();
     gameObjectFactory = new Factory(textureAtlas);
 
+    // LOAD LEVEL
     nlohmann::json map;
     std::fstream fInput;
     fInput.open(R"(D:\Dev\C++\GameEngine\resources\map\map.json)");
@@ -89,12 +94,15 @@ Game::~Game() {
         delete obj;
     }
 
+    delete textureAtlas;
+    delete gameObjectFactory;
+
     delete window;
 }
 
 static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json) {
-    std::vector<std::vector<int>> map;
     nlohmann::json mapJSON = json["map"];
+    std::vector<std::vector<int>> map;
 
     std::cout << "COPY MAP FROM JSON FILE: " << std::endl;
 
