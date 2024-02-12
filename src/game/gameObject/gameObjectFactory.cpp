@@ -6,17 +6,17 @@ Factory::Factory(TextureAtlas* newAtlas) {
     atlas = newAtlas;
 }
 
-GameObject* Factory::buildGameObject(TileType type) const {
+GameObject* Factory::buildGameObject(GameTile* parentTile) const {
     GameObject* tempObject = nullptr;
 
-    switch (type) {
+    switch (parentTile->getContent()) {
         case TileType::nothing:
             return nullptr;
         case TileType::wall:
-            tempObject = new GameObject(atlas->textures["BRICK"]);
+            tempObject = new GameObject(atlas->textures["BRICK"], parentTile);
             return tempObject;
         case TileType::player:
-            tempObject = new Player(atlas->textures["PLAYER_DOWN"]);
+            tempObject = new Player(atlas->textures["PLAYER_DOWN"], parentTile);
             return tempObject;
         case TileType::boulder:
             return nullptr;

@@ -1,32 +1,36 @@
 #include "gameObject.h"
 
-GameObject::GameObject(const sf::Texture* gameTexture, sf::Vector2i position) :
-    sprite(sf::Sprite(*gameTexture)) {
-    sprite.setOrigin(sf::Vector2f(16, 16));
-    setPosition(position);
+GameObject::GameObject(const sf::Texture *newTexture, GameTile *newTile) :
+    sprite(sf::Sprite(*newTexture)),
+    tile(newTile) {
+        sprite.setOrigin(sf::Vector2f(16, 16));
+
+        updatePosition();
 }
 
 void GameObject::update() {
-
+    updatePosition();
 }
 
 sf::Sprite GameObject::getSprite() {
     return sprite;
 }
 
-sf::Vector2i GameObject::getPosition() {
-    return position;
+GameTile *GameObject::getTile() {
+    return tile;
 }
 
 void GameObject::setTexture(const sf::Texture& newTexture) {
     sprite.setTexture(newTexture);
 }
 
-void GameObject::setPosition(const sf::Vector2i& newPosition) {
-    position = newPosition;
+void GameObject::setTile(GameTile *newTile) {
+    tile = newTile;
 
-    sprite.setPosition(sf::Vector2f(position));
+    updatePosition();
 }
 
-
-
+void GameObject::updatePosition() {
+    sf::Vector2f newPosition = sf::Vector2f(tile->getLocation() * 32 + sf::Vector2i(16, 16));
+    sprite.setPosition(newPosition);
+}

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "gameObject/gameObject.h"
 #include "nlohmann/json.hpp"
+#include "SFML/System.hpp"
 
 enum class TileType {
     nothing = 0,
@@ -20,6 +20,9 @@ public:
     TileType getContent();
     sf::Vector2i getLocation();
 
+    void setContent(TileType newContent);
+    void setLocation(sf::Vector2i newLocation);
+
 private:
     sf::Vector2i location;
 
@@ -30,9 +33,8 @@ class GameField {
 public:
     GameField();
 
-    GameTile* getTile(unsigned int x, unsigned int y);
+    GameTile* getTile(int x, int y);
     std::vector<std::vector<GameTile*>> getTiles();
-    void swapTiles(GameTile *first, GameTile *second);
 
     int width, height;
 

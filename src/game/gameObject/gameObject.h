@@ -1,20 +1,24 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "gameField/gameField.h"
 
 class GameObject {
 public:
-    explicit GameObject(const sf::Texture* gameTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+    explicit GameObject(const sf::Texture *newTexture, GameTile *newTile);
 
+    // Update function called whenever we need, not necessarily in a game update loop
     virtual void update();
 
     sf::Sprite getSprite();
-    sf::Vector2i getPosition();
+    GameTile *getTile();
 
     void setTexture(const sf::Texture& newTexture);
-    void setPosition(const sf::Vector2i& newPosition);
+    void setTile(GameTile *newTile);
 
 protected:
-    sf::Vector2i position;
+    GameTile *tile;
     sf::Sprite sprite;
+
+    void updatePosition();
 };

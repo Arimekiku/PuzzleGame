@@ -25,17 +25,31 @@ void Game::updateEvents() {
                     window->close();
                 }
 
-//                auto pPosition = player->getLocation();
-//
-//                if (e.key.code == sf::Keyboard::Key::W) {
-//                    pPosition += sf::Vector2i(0, -1);
-//                } else if (e.key.code == sf::Keyboard::Key::S) {
-//                    pPosition += sf::Vector2i(0, 1);
-//                } else if (e.key.code == sf::Keyboard::Key::A) {
-//                    pPosition += sf::Vector2i(-1, 0);
-//                } else if (e.key.code == sf::Keyboard::Key::D) {
-//                    pPosition += sf::Vector2i(1, 0);
-//                }
+                auto pPosition = player->getTile()->getLocation();
+                std::cout << "Player current position: " << pPosition.x << " " << pPosition.y << std::endl;
+
+                if (e.key.code == sf::Keyboard::Key::W) {
+                    pPosition += sf::Vector2i(0, -1);
+                } else if (e.key.code == sf::Keyboard::Key::S) {
+                    pPosition += sf::Vector2i(0, 1);
+                } else if (e.key.code == sf::Keyboard::Key::A) {
+                    pPosition += sf::Vector2i(-1, 0);
+                } else if (e.key.code == sf::Keyboard::Key::D) {
+                    pPosition += sf::Vector2i(1, 0);
+                }
+
+                std::cout << "Player possible position: " << pPosition.x << " " << pPosition.y << std::endl;
+
+                GameTile *newTile = field->getTile(pPosition.x, pPosition.y);
+
+                if (newTile != nullptr && newTile->getContent() != TileType::wall) {
+                    std::cout << "Tile on position: " << (int)newTile->getContent() << std::endl;
+
+                    player->getTile()->setContent(TileType::nothing);
+
+                    player->setTile(newTile);
+                    newTile->setContent(TileType::player);
+                }
 
                 break;
         }
@@ -45,7 +59,7 @@ void Game::updateEvents() {
 void Game::update() {
     updateEvents();
 
-    for (auto obj : objects) {
+    for (const auto& obj : objects) {
         obj->update();
     }
 }
@@ -53,7 +67,7 @@ void Game::update() {
 void Game::render() {
     window->clear();
 
-    for (auto obj : objects) {
+    for (const auto& obj : objects) {
         window->draw(obj->getSprite());
     }
 
@@ -79,12 +93,9 @@ void Game::start() {
     field = new GameField();
     for (const auto& row : field->getTiles()) {
         for (const auto& tile : row) {
-            GameObject *objectToBuild = objectFactory->buildGameObject(tile->getContent());
+            GameObject *objectToBuild = objectFactory->buildGameObject(tile);
 
             if (objectToBuild != nullptr) {
-                sf::Vector2i resultPos = tile->getLocation() * 32 + sf::Vector2i(16, 16);
-                objectToBuild->setPosition(resultPos);
-
                 if (typeid(*objectToBuild) == typeid(Player)) {
                     player = dynamic_cast<Player *>(objectToBuild);
                 } else {

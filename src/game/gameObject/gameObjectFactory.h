@@ -8,7 +8,7 @@ class Factory {
 public:
     explicit Factory(TextureAtlas* newAtlas);
 
-    [[nodiscard]] GameObject* buildGameObject(TileType type) const;
+    [[nodiscard]] GameObject* buildGameObject(GameTile *parentTile) const;
 
     ~Factory();
 

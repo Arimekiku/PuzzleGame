@@ -30,23 +30,20 @@ GameField::GameField() {
         y++;
     }
 
-    width = tiles.size();
-    height = tiles[0].size();
+    height = tiles.size();
+    width = tiles[0].size();
 }
 
-GameTile *GameField::getTile(unsigned int x, unsigned int y) {
-    if (y > height || x > width) {
-        std::cout << "Invalid tile search.";
-        throw std::exception();
+GameTile *GameField::getTile(int x, int y) {
+    if (y < 0 || x < 0) {
+        return nullptr;
     }
 
-    return tiles[x][y];
-}
+    if (y > height || x > width) {
+        return nullptr;
+    }
 
-void GameField::swapTiles(GameTile *first, GameTile *second) {
-    GameTile *buf = first;
-    first = second;
-    second = buf;
+    return tiles[y][x];
 }
 
 std::vector<std::vector<GameTile *>> GameField::getTiles() {
@@ -68,7 +65,7 @@ GameField::~GameField() {
 GameTile::GameTile(TileType type, sf::Vector2i newLocation) {
     tileType = type;
 
-    location = newLocation;
+    setLocation(newLocation);
 }
 
 TileType GameTile::getContent() {
@@ -77,6 +74,14 @@ TileType GameTile::getContent() {
 
 sf::Vector2i GameTile::getLocation() {
     return location;
+}
+
+void GameTile::setContent(TileType newContent) {
+    tileType = newContent;
+}
+
+void GameTile::setLocation(sf::Vector2i newLocation) {
+    location = newLocation;
 }
 
 #pragma endregion
