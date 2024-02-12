@@ -2,10 +2,14 @@
 #include <fstream>
 #include "game.h"
 
+#pragma region Game
+
 Game::Game() {
     window = nullptr;
     player = nullptr;
     field = nullptr;
+    textureAtlas = nullptr;
+    objectFactory = nullptr;
 
     start();
 }
@@ -21,17 +25,17 @@ void Game::updateEvents() {
                     window->close();
                 }
 
-                auto pPosition = player->getPosition();
-
-                if (e.key.code == sf::Keyboard::Key::W) {
-                    player->setPosition(pPosition + sf::Vector2i(0, -32));
-                } else if (e.key.code == sf::Keyboard::Key::S) {
-                    player->setPosition(pPosition + sf::Vector2i(0, 32));
-                } else if (e.key.code == sf::Keyboard::Key::A) {
-                    player->setPosition(pPosition + sf::Vector2i(-32, 0));
-                } else if (e.key.code == sf::Keyboard::Key::D) {
-                    player->setPosition(pPosition + sf::Vector2i(32, 0));
-                }
+//                auto pPosition = player->getLocation();
+//
+//                if (e.key.code == sf::Keyboard::Key::W) {
+//                    pPosition += sf::Vector2i(0, -1);
+//                } else if (e.key.code == sf::Keyboard::Key::S) {
+//                    pPosition += sf::Vector2i(0, 1);
+//                } else if (e.key.code == sf::Keyboard::Key::A) {
+//                    pPosition += sf::Vector2i(-1, 0);
+//                } else if (e.key.code == sf::Keyboard::Key::D) {
+//                    pPosition += sf::Vector2i(1, 0);
+//                }
 
                 break;
         }
@@ -63,29 +67,35 @@ bool Game::running() const {
 }
 
 void Game::start() {
+    // Init window
     auto vMode = sf::VideoMode(sf::Vector2u(640, 480));
     window = new sf::RenderWindow(vMode, "Title", sf::Style::Default);
 
+    // Init services
+    textureAtlas = new TextureAtlas();
+    objectFactory = new Factory(textureAtlas);
+
+    // Init objects
     field = new GameField();
     for (const auto& row : field->getTiles()) {
         for (const auto& tile : row) {
-            auto obj = tile->getContent();
+            GameObject *objectToBuild = objectFactory->buildGameObject(tile->getContent());
 
-            if (obj != nullptr) {
+            if (objectToBuild != nullptr) {
                 sf::Vector2i resultPos = tile->getLocation() * 32 + sf::Vector2i(16, 16);
-                obj->setPosition(resultPos);
+                objectToBuild->setPosition(resultPos);
 
-                if (typeid(*obj) == typeid(Player)) {
-                    player = dynamic_cast<Player*>(obj);
+                if (typeid(*objectToBuild) == typeid(Player)) {
+                    player = dynamic_cast<Player *>(objectToBuild);
                 } else {
-                    addGameObject(obj);
+                    addGameTile(objectToBuild);
                 }
             }
         }
     }
 }
 
-void Game::addGameObject(GameObject* newObject) {
+void Game::addGameTile(GameObject* newObject) {
     objects.push_back(newObject);
 }
 
@@ -95,5 +105,10 @@ Game::~Game() {
     }
 
     delete field;
+    delete objectFactory;
+    delete textureAtlas;
     delete window;
 }
+
+#pragma endregion
+

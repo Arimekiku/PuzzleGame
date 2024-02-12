@@ -6,17 +6,24 @@ Factory::Factory(TextureAtlas* newAtlas) {
     atlas = newAtlas;
 }
 
-GameObject* Factory::buildGameObject(int value) const {
+GameObject* Factory::buildGameObject(TileType type) const {
     GameObject* tempObject = nullptr;
-    switch (value) {
-        case 0:
+
+    switch (type) {
+        case TileType::nothing:
             return nullptr;
-        case 1:
+        case TileType::wall:
             tempObject = new GameObject(atlas->textures["BRICK"]);
             return tempObject;
-        case 2:
+        case TileType::player:
             tempObject = new Player(atlas->textures["PLAYER_DOWN"]);
             return tempObject;
+        case TileType::boulder:
+            return nullptr;
+        case TileType::checkpoint:
+            return nullptr;
+        case TileType::trap:
+            return nullptr;
         default:
             std::cout << "Can't load this type of game object." << std::endl;
             throw std::exception();

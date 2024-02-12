@@ -12,7 +12,7 @@ public:
 
     void update();
     void render();
-    void addGameObject(GameObject* newObject);
+    void addGameTile(GameObject *newObject);
 
     [[nodiscard]] bool running() const;
 
@@ -22,10 +22,13 @@ private:
     void start();
     void updateEvents();
 
-    sf::RenderWindow* window;
+    sf::RenderWindow *window;
     sf::Event e;
 
-    GameField* field;
-    std::vector<GameObject*> objects;
-    Player* player;
+    GameField *field;
+    std::vector<GameObject *> objects;
+    Player *player;
+
+    TextureAtlas *textureAtlas;
+    Factory *objectFactory;
 };

@@ -1,34 +1,29 @@
 #pragma once
 
-#include <vector>
+#include <iostream>
 #include "gameObject/gameObject.h"
-#include "gameObject/gameObjectFactory.h"
 #include "nlohmann/json.hpp"
 
-enum GameTiles {
-    NOTHING = 0,
-    WALL = 1,
-    PLAYER = 2,
-    BOULDER = 3,
-    CHECKPOINT = 4,
-    TRAP = 5
+enum class TileType {
+    nothing = 0,
+    wall = 1,
+    player = 2,
+    boulder = 3,
+    checkpoint = 4,
+    trap = 5
 };
 
 class GameTile {
 public:
-    GameTile(GameObject* newObject, sf::Vector2i newLocation);
+    GameTile(TileType type, sf::Vector2i newLocation);
 
-    GameObject* getContent();
+    TileType getContent();
     sf::Vector2i getLocation();
-
-    void setTileObject(GameObject* newObject);
-
-    ~GameTile();
 
 private:
     sf::Vector2i location;
 
-    GameObject* tileObject;
+    TileType tileType;
 };
 
 class GameField {
@@ -37,6 +32,7 @@ public:
 
     GameTile* getTile(unsigned int x, unsigned int y);
     std::vector<std::vector<GameTile*>> getTiles();
+    void swapTiles(GameTile *first, GameTile *second);
 
     int width, height;
 
@@ -44,9 +40,6 @@ public:
 
 private:
     std::vector<std::vector<GameTile*>> tiles;
-
-    TextureAtlas* textureAtlas;
-    Factory* objectGenerator;
 };
 
-static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json);
+static std::vector<std::vector<TileType>> loadMapFromJSOM(nlohmann::json json);

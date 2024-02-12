@@ -1,13 +1,9 @@
 #include <fstream>
-#include <iostream>
 #include "gameField.h"
 
 #pragma region GameField
 
 GameField::GameField() {
-    textureAtlas = new TextureAtlas();
-    objectGenerator = new Factory(textureAtlas);
-
     nlohmann::json map;
     std::fstream fInput;
     fInput.open(R"(D:\Dev\C++\GameEngine\resources\map\map.json)");
@@ -20,9 +16,9 @@ GameField::GameField() {
     for (const auto& row : mapObjects) {
         std::vector<GameTile*> tileRow;
 
-        for (const int& value : row) {
-            auto tempObject = objectGenerator->buildGameObject(value);
-            auto newTile = new GameTile(tempObject, sf::Vector2i(x, y));
+        for (const auto& value : row) {
+            auto newTile = new GameTile(value, sf::Vector2i(x, y));
+
             tileRow.push_back(newTile);
 
             x++;
@@ -47,63 +43,83 @@ GameTile *GameField::getTile(unsigned int x, unsigned int y) {
     return tiles[x][y];
 }
 
+void GameField::swapTiles(GameTile *first, GameTile *second) {
+    GameTile *buf = first;
+    first = second;
+    second = buf;
+}
+
 std::vector<std::vector<GameTile *>> GameField::getTiles() {
     return tiles;
 }
 
 GameField::~GameField() {
-    for (auto row : tiles) {
+    for (const auto& row : tiles) {
         for (auto obj : row) {
             delete obj;
         }
     }
-
-    delete textureAtlas;
-    delete objectGenerator;
 }
 
 #pragma endregion
 
 #pragma region GameTile
 
-GameTile::GameTile(GameObject *newObject, sf::Vector2i newLocation) {
-    tileObject = newObject;
+GameTile::GameTile(TileType type, sf::Vector2i newLocation) {
+    tileType = type;
 
     location = newLocation;
 }
 
-GameObject *GameTile::getContent() {
-    return tileObject;
+TileType GameTile::getContent() {
+    return tileType;
 }
 
 sf::Vector2i GameTile::getLocation() {
     return location;
 }
 
-void GameTile::setTileObject(GameObject *newObject) {
-    tileObject = newObject;
-}
-
-GameTile::~GameTile() {
-    delete tileObject;
-}
-
 #pragma endregion
 
-static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json) {
+static std::vector<std::vector<TileType>> loadMapFromJSOM(nlohmann::json json) {
     nlohmann::json mapJSON = json["map"];
-    std::vector<std::vector<int>> map;
+    std::vector<std::vector<TileType>> map;
 
     std::cout << "COPY MAP FROM JSON FILE: " << std::endl;
 
     for (const auto& obj : mapJSON) {
         std::vector<int> row = obj;
+        std::vector<TileType> tempTypes;
 
         for (int value : row) {
             std::cout << value << " ";
+
+            switch (value) {
+                case 0:
+                    tempTypes.push_back(TileType::nothing);
+                    break;
+                case 1:
+                    tempTypes.push_back(TileType::wall);
+                    break;
+                case 2:
+                    tempTypes.push_back(TileType::player);
+                    break;
+                case 3:
+                    tempTypes.push_back(TileType::boulder);
+                    break;
+                case 4:
+                    tempTypes.push_back(TileType::checkpoint);
+                    break;
+                case 5:
+                    tempTypes.push_back(TileType::trap);
+                    break;
+                default:
+                    std::cout << "Map conversion fail" << std::endl;
+                    throw std::exception();
+            }
         }
 
-        map.push_back(row);
+        map.push_back(tempTypes);
 
         std::cout << std::endl;
     }
