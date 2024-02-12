@@ -4,9 +4,8 @@
 
 Game::Game() {
     window = nullptr;
-    textureAtlas = nullptr;
-    gameObjectFactory = nullptr;
     player = nullptr;
+    field = nullptr;
 
     start();
 }
@@ -64,42 +63,25 @@ bool Game::running() const {
 }
 
 void Game::start() {
-    // SETUP STUFF
     auto vMode = sf::VideoMode(sf::Vector2u(640, 480));
     window = new sf::RenderWindow(vMode, "Title", sf::Style::Default);
 
-    textureAtlas = new TextureAtlas();
-    gameObjectFactory = new Factory(textureAtlas);
+    field = new GameField();
+    for (const auto& row : field->getTiles()) {
+        for (const auto& tile : row) {
+            auto obj = tile->getContent();
 
-    // LOAD LEVEL
-    nlohmann::json map;
-    std::fstream fInput;
-    fInput.open(R"(D:\Dev\C++\GameEngine\resources\map\map.json)");
-    fInput >> map;
-    fInput.close();
+            if (obj != nullptr) {
+                sf::Vector2i resultPos = tile->getLocation() * 32 + sf::Vector2i(16, 16);
+                obj->setPosition(resultPos);
 
-    int i = 0, j = 0;
-
-    auto mapObjects = loadMapFromJSOM(map);
-    for (const auto& row : mapObjects) {
-        for (const int& value : row) {
-            auto tempObject = gameObjectFactory->buildGameObject(value);
-
-            if (tempObject != nullptr) {
-                tempObject->setPosition(sf::Vector2i(16 + 32 * i, 16 + 32 * j));
-
-                if (typeid(*tempObject) == typeid(Player)) {
-                    player = dynamic_cast<Player*>(tempObject);
+                if (typeid(*obj) == typeid(Player)) {
+                    player = dynamic_cast<Player*>(obj);
                 } else {
-                    addGameObject(tempObject);
+                    addGameObject(obj);
                 }
             }
-
-            i++;
         }
-
-        i = 0;
-        j++;
     }
 }
 
@@ -112,29 +94,6 @@ Game::~Game() {
         delete obj;
     }
 
-    delete textureAtlas;
-    delete gameObjectFactory;
-
+    delete field;
     delete window;
-}
-
-static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json) {
-    nlohmann::json mapJSON = json["map"];
-    std::vector<std::vector<int>> map;
-
-    std::cout << "COPY MAP FROM JSON FILE: " << std::endl;
-
-    for (const auto& obj : mapJSON) {
-        std::vector<int> row = obj;
-
-        for (int value : row) {
-            std::cout << value << " ";
-        }
-
-        map.push_back(row);
-
-        std::cout << std::endl;
-    }
-
-    return map;
 }

@@ -2,6 +2,7 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE
         main.cpp
         game/game.cpp
+        game/gameField/gameField.cpp
         game/gameObject/gameObject.cpp
         game/gameObject/gameObjectFactory.cpp
         game/player/player.cpp

@@ -3,8 +3,8 @@
 #include "SFML/Graphics.hpp"
 #include "gameObject/gameObject.h"
 #include "gameObject/gameObjectFactory.h"
-#include "nlohmann/json.hpp"
 #include "player/player.h"
+#include "gameField/gameField.h"
 
 class Game {
 public:
@@ -22,14 +22,10 @@ private:
     void start();
     void updateEvents();
 
-    TextureAtlas* textureAtlas;
-    Factory* gameObjectFactory;
-
     sf::RenderWindow* window;
     sf::Event e;
 
+    GameField* field;
     std::vector<GameObject*> objects;
     Player* player;
 };
-
-static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json);
