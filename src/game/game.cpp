@@ -6,6 +6,7 @@ Game::Game() {
     window = nullptr;
     textureAtlas = nullptr;
     gameObjectFactory = nullptr;
+    player = nullptr;
 
     start();
 }
@@ -20,8 +21,19 @@ void Game::updateEvents() {
                 if (e.key.code == sf::Keyboard::Key::Escape) {
                     window->close();
                 }
-                break;
-            default:
+
+                auto pPosition = player->getPosition();
+
+                if (e.key.code == sf::Keyboard::Key::W) {
+                    player->setPosition(pPosition + sf::Vector2i(0, -32));
+                } else if (e.key.code == sf::Keyboard::Key::S) {
+                    player->setPosition(pPosition + sf::Vector2i(0, 32));
+                } else if (e.key.code == sf::Keyboard::Key::A) {
+                    player->setPosition(pPosition + sf::Vector2i(-32, 0));
+                } else if (e.key.code == sf::Keyboard::Key::D) {
+                    player->setPosition(pPosition + sf::Vector2i(32, 0));
+                }
+
                 break;
         }
     }
@@ -41,6 +53,8 @@ void Game::render() {
     for (auto obj : objects) {
         window->draw(obj->getSprite());
     }
+
+    window->draw(player->getSprite());
 
     window->display();
 }
@@ -72,9 +86,13 @@ void Game::start() {
             auto tempObject = gameObjectFactory->buildGameObject(value);
 
             if (tempObject != nullptr) {
-                tempObject->position = sf::Vector2i(16 + 32 * i, 16 + 32 * j);
+                tempObject->setPosition(sf::Vector2i(16 + 32 * i, 16 + 32 * j));
 
-                addGameObject(tempObject);
+                if (typeid(*tempObject) == typeid(Player)) {
+                    player = dynamic_cast<Player*>(tempObject);
+                } else {
+                    addGameObject(tempObject);
+                }
             }
 
             i++;

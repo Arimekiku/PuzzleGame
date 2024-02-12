@@ -4,6 +4,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         game/game.cpp
         game/gameObject/gameObject.cpp
         game/gameObject/gameObjectFactory.cpp
+        game/player/player.cpp
         game/textureHandler/textureHandler.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE vendor)

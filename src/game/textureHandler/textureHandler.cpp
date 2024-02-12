@@ -1,10 +1,13 @@
 #include "textureHandler.h"
 
 TextureAtlas::TextureAtlas() {
-    textures["BRICK"] = new sf::Texture();
+    initTexture(BRICK_PATH, "BRICK");
+    initTexture(PLAYER_DOWN_PATH, "PLAYER_DOWN");
+}
 
-    // Init brick texture
-    if (! textures["BRICK"]->loadFromFile(BRICK_PATH)) {
+void TextureAtlas::initTexture(const std::string& path, const std::string& name) {
+    textures[name] = new sf::Texture();
+    if (!textures[name]->loadFromFile(path)) {
         throw std::exception();
     }
 }

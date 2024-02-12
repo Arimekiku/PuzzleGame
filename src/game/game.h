@@ -4,6 +4,7 @@
 #include "gameObject/gameObject.h"
 #include "gameObject/gameObjectFactory.h"
 #include "nlohmann/json.hpp"
+#include "player/player.h"
 
 class Game {
 public:
@@ -21,11 +22,14 @@ private:
     void start();
     void updateEvents();
 
-    sf::RenderWindow* window;
     TextureAtlas* textureAtlas;
     Factory* gameObjectFactory;
-    std::vector<GameObject*> objects;
+
+    sf::RenderWindow* window;
     sf::Event e;
+
+    std::vector<GameObject*> objects;
+    Player* player;
 };
 
 static std::vector<std::vector<int>> loadMapFromJSOM(nlohmann::json json);
